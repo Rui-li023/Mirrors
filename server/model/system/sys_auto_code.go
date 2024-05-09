@@ -20,8 +20,9 @@ type AutoCodeStruct struct {
 	AutoCreateMenuToSql bool                   `json:"autoCreateMenuToSql"` // 是否自动创建menu
 	AutoCreateResource  bool                   `json:"autoCreateResource"`  // 是否自动创建资源标识
 	AutoMoveFile        bool                   `json:"autoMoveFile"`        // 是否自动移动文件
-	BusinessDB          string                 `json:"businessDB"`          // 业务数据库
-	GvaModel            bool                   `json:"gvaModel"`            // 是否使用gva默认Model
+	AutoKeepCode        bool                   `json:"autoKeepCode"`
+	BusinessDB          string                 `json:"businessDB"` // 业务数据库
+	GvaModel            bool                   `json:"gvaModel"`   // 是否使用gva默认Model
 	Fields              []*Field               `json:"fields"`
 	PrimaryField        *Field                 `json:"primaryField"`
 	HasTimer            bool                   `json:"-"`
