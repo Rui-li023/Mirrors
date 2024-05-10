@@ -86,6 +86,7 @@ func Routers() *gin.Engine {
 	{
 		environmentRouter := router.RouterGroupApp.Environment
 		environmentRouter.InitImagesRouter(PrivateGroup, PublicGroup)
+		environmentRouter.InitContainerRouter(PrivateGroup, PublicGroup)
 	}
 
 	global.GVA_LOG.Info("router register success")
