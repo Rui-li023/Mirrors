@@ -21,8 +21,8 @@
             </div>
             <div class="mb-9">
               <p class="text-center text-4xl font-bold">{{ $GIN_VUE_ADMIN.appName }}</p>
-              <p class="text-center text-sm font-normal text-gray-500 mt-2.5">A management platform using Golang and Vue
-              </p>
+              <!-- <p class="text-center text-sm font-normal text-gray-500 mt-2.5">A management platform using Golang and Vue -->
+              <!-- </p> -->
             </div>
             <el-form
               ref="loginForm"
@@ -85,7 +85,7 @@
                   @click="submitForm"
                 >登 录</el-button>
               </el-form-item>
-              <el-form-item class="mb-6">
+              <!-- <el-form-item class="mb-6">
                 <el-button
                   class="shadow shadow-active h-11 w-full"
                   type="primary"
@@ -93,19 +93,19 @@
                   @click="checkInit"
                 >前往初始化</el-button>
 
-              </el-form-item>
+              </el-form-item> -->
             </el-form>
           </div>
         </div>
       </div>
-      <div class="hidden md:block w-1/2 h-full float-right bg-[#194bfb]"><img
+      <!-- <div class="hidden md:block w-1/2 h-full float-right bg-[#194bfb]"><img
         class="h-full"
         src="@/assets/login_right_banner.jpg"
         alt="banner"
-      ></div>
+      ></div> -->
     </div>
 
-    <BottomInfo class="left-0 right-0 absolute bottom-3 mx-auto  w-full z-20">
+    <!-- <BottomInfo class="left-0 right-0 absolute bottom-3 mx-auto  w-full z-20">
       <div class="links items-center justify-center gap-2 hidden md:flex">
         <a
           href="http://doc.henrongyi.top/"
@@ -148,7 +148,8 @@
           >
         </a>
       </div>
-    </BottomInfo>
+    </BottomInfo> -->
+    
   </div>
 </template>
 

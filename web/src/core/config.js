@@ -3,8 +3,8 @@
  */
 
 const config = {
-  appName: 'Gin-Vue-Admin',
-  appLogo: 'https://www.gin-vue-admin.com/img/logo.png',
+  appName: '蜜罐管理系统',
+  appLogo: '/src/assets/logo.png',
   showViteLogo: false,
   logs: [],
 }
