@@ -33,11 +33,11 @@ func (imagesApi *ImagesApi) CreateImages(c *gin.Context) {
 		return
 	}
 
-	if err := imagesService.CreateImages(&images); err != nil {
+	if err := utils.PullImage(images.Repository, images.Tag); err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Error(err))
 		response.FailWithMessage("创建失败", c)
 	} else {
-		response.OkWithMessage("创建成功", c)
+		response.OkWithMessage("创建成功，镜像加载需要时间，稍后请手动刷新！", c)
 	}
 }
 
@@ -52,9 +52,9 @@ func (imagesApi *ImagesApi) CreateImages(c *gin.Context) {
 // @Router /images/deleteImages [delete]
 func (imagesApi *ImagesApi) DeleteImages(c *gin.Context) {
 	ID := c.Query("ID")
-	if err := imagesService.DeleteImages(ID); err != nil {
+	if err := utils.DeleteImageByID(ID); err != nil {
 		global.GVA_LOG.Error("删除失败!", zap.Error(err))
-		response.FailWithMessage("删除失败", c)
+		response.FailWithMessage("删除失败，如果镜像被使用则无法删除！", c)
 	} else {
 		response.OkWithMessage("删除成功", c)
 	}

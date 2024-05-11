@@ -3,7 +3,9 @@ package utils
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/client"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/environment"
@@ -184,5 +186,47 @@ func RestartContainerByID(id string) error {
 		return err
 	}
 	global.GVA_LOG.Info("Container restarted successfully: ", zap.String("id", id))
+	return nil
+}
+
+func DeleteImageByID(id string) error {
+	// Create a new Docker client
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return err
+	}
+
+	image_, _, err := cli.ImageInspectWithRaw(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	_, err = cli.ImageRemove(ctx, image_.ID, image.RemoveOptions{})
+	if err != nil {
+		return err
+	}
+	global.GVA_LOG.Info("Image deleted successfully: ", zap.String("id", id))
+	return nil
+}
+
+func PullImage(imageName, imageTag string) error {
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return err
+	}
+
+	if imageTag == "" {
+		_, err = cli.ImagePull(ctx, fmt.Sprintf("%s", imageName), image.PullOptions{})
+	} else {
+		_, err = cli.ImagePull(ctx, fmt.Sprintf("%s:%s", imageName, imageTag), image.PullOptions{})
+	}
+
+	if err != nil {
+		return err
+	}
+
+	global.GVA_LOG.Info("Image pulled successfully: ", zap.String("image", fmt.Sprintf("%s:%s", imageName, imageTag)))
 	return nil
 }
