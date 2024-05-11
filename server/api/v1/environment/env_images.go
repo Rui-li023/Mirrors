@@ -2,19 +2,19 @@ package environment
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
-    "github.com/flipped-aurora/gin-vue-admin/server/model/environment"
-    environmentReq "github.com/flipped-aurora/gin-vue-admin/server/model/environment/request"
-    "github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
-    "github.com/flipped-aurora/gin-vue-admin/server/service"
-    "github.com/gin-gonic/gin"
-    "go.uber.org/zap"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/environment"
+	environmentReq "github.com/flipped-aurora/gin-vue-admin/server/model/environment/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/service"
+	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type ImagesApi struct {
 }
 
 var imagesService = service.ServiceGroupApp.EnvironmentServiceGroup.ImagesService
-
 
 // CreateImages 创建镜像
 // @Tags Images
@@ -34,7 +34,7 @@ func (imagesApi *ImagesApi) CreateImages(c *gin.Context) {
 	}
 
 	if err := imagesService.CreateImages(&images); err != nil {
-        global.GVA_LOG.Error("创建失败!", zap.Error(err))
+		global.GVA_LOG.Error("创建失败!", zap.Error(err))
 		response.FailWithMessage("创建失败", c)
 	} else {
 		response.OkWithMessage("创建成功", c)
@@ -53,7 +53,7 @@ func (imagesApi *ImagesApi) CreateImages(c *gin.Context) {
 func (imagesApi *ImagesApi) DeleteImages(c *gin.Context) {
 	ID := c.Query("ID")
 	if err := imagesService.DeleteImages(ID); err != nil {
-        global.GVA_LOG.Error("删除失败!", zap.Error(err))
+		global.GVA_LOG.Error("删除失败!", zap.Error(err))
 		response.FailWithMessage("删除失败", c)
 	} else {
 		response.OkWithMessage("删除成功", c)
@@ -71,7 +71,7 @@ func (imagesApi *ImagesApi) DeleteImages(c *gin.Context) {
 func (imagesApi *ImagesApi) DeleteImagesByIds(c *gin.Context) {
 	IDs := c.QueryArray("IDs[]")
 	if err := imagesService.DeleteImagesByIds(IDs); err != nil {
-        global.GVA_LOG.Error("批量删除失败!", zap.Error(err))
+		global.GVA_LOG.Error("批量删除失败!", zap.Error(err))
 		response.FailWithMessage("批量删除失败", c)
 	} else {
 		response.OkWithMessage("批量删除成功", c)
@@ -96,7 +96,7 @@ func (imagesApi *ImagesApi) UpdateImages(c *gin.Context) {
 	}
 
 	if err := imagesService.UpdateImages(images); err != nil {
-        global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		global.GVA_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
 	} else {
 		response.OkWithMessage("更新成功", c)
@@ -115,7 +115,7 @@ func (imagesApi *ImagesApi) UpdateImages(c *gin.Context) {
 func (imagesApi *ImagesApi) FindImages(c *gin.Context) {
 	ID := c.Query("ID")
 	if reimages, err := imagesService.GetImages(ID); err != nil {
-        global.GVA_LOG.Error("查询失败!", zap.Error(err))
+		global.GVA_LOG.Error("查询失败!", zap.Error(err))
 		response.FailWithMessage("查询失败", c)
 	} else {
 		response.OkWithData(gin.H{"reimages": reimages}, c)
@@ -138,17 +138,30 @@ func (imagesApi *ImagesApi) GetImagesList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if list, total, err := imagesService.GetImagesInfoList(pageInfo); err != nil {
-	    global.GVA_LOG.Error("获取失败!", zap.Error(err))
-        response.FailWithMessage("获取失败", c)
-    } else {
-        response.OkWithDetailed(response.PageResult{
-            List:     list,
-            Total:    total,
-            Page:     pageInfo.Page,
-            PageSize: pageInfo.PageSize,
-        }, "获取成功", c)
-    }
+
+	if list, err := utils.GetDockerImages(); err != nil {
+		global.GVA_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+	} else {
+		response.OkWithDetailed(response.PageResult{
+			List:     list,
+			Total:    int64(len(list)),
+			Page:     pageInfo.Page,
+			PageSize: pageInfo.PageSize,
+		}, "获取成功", c)
+	}
+
+	//if list, total, err := imagesService.GetImagesInfoList(pageInfo); err != nil {
+	//	global.GVA_LOG.Error("获取失败!", zap.Error(err))
+	//	response.FailWithMessage("获取失败", c)
+	//} else {
+	//	response.OkWithDetailed(response.PageResult{
+	//		List:     list,
+	//		Total:    total,
+	//		Page:     pageInfo.Page,
+	//		PageSize: pageInfo.PageSize,
+	//	}, "获取成功", c)
+	//}
 }
 
 // GetImagesPublic 不需要鉴权的镜像接口
@@ -160,9 +173,9 @@ func (imagesApi *ImagesApi) GetImagesList(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
 // @Router /images/getImagesPublic [get]
 func (imagesApi *ImagesApi) GetImagesPublic(c *gin.Context) {
-    // 此接口不需要鉴权
-    // 示例为返回了一个固定的消息接口，一般本接口用于C端服务，需要自己实现业务逻辑
-    response.OkWithDetailed(gin.H{
-       "info": "不需要鉴权的镜像接口信息",
-    }, "获取成功", c)
+	// 此接口不需要鉴权
+	// 示例为返回了一个固定的消息接口，一般本接口用于C端服务，需要自己实现业务逻辑
+	response.OkWithDetailed(gin.H{
+		"info": "不需要鉴权的镜像接口信息",
+	}, "获取成功", c)
 }

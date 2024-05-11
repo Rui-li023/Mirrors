@@ -25,11 +25,61 @@ type Container struct {
 	Status       string `json:"Status"`
 }
 
+type DockerImage struct {
+	Containers   string `json:"Containers"`
+	CreatedAt    string `json:"CreatedAt"`
+	CreatedSince string `json:"CreatedSince"`
+	Digest       string `json:"Digest"`
+	ID           string `json:"ID"`
+	Repository   string `json:"Repository"`
+	SharedSize   string `json:"SharedSize"`
+	Size         string `json:"Size"`
+	Tag          string `json:"Tag"`
+	UniqueSize   string `json:"UniqueSize"`
+	VirtualSize  string `json:"VirtualSize"`
+}
+
+// GetDockerImages returns a list of DockerImage with details of all images
+func GetDockerImages() ([]environment.Images, error) {
+	cmd := exec.Command("docker", "images", "--format", "json")
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	lines := strings.Split(string(output), "\n")
+	images := make([]environment.Images, 0, len(lines))
+
+	for _, line := range lines {
+		if line == "" {
+			continue
+		}
+		var image DockerImage
+		err = json.Unmarshal([]byte(line), &image)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		image_ := environment.Images{
+			Image_Id:     image.ID,
+			Repository:   image.Repository,
+			Tag:          image.Tag,
+			Size:         image.Size,
+			CreatedSince: image.CreatedSince,
+		}
+		images = append(images, image_)
+	}
+	return images, nil
+}
+
 // GetDockerContainers returns a list of ContainerInfo with details of all running containers
 func GetDockerContainers() ([]environment.Container, error) {
 
 	// Run the docker ps command
-	cmd := exec.Command("docker", "ps", "--format", "json")
+	cmd := exec.Command("docker", "ps", "-a", "--format", "json")
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
