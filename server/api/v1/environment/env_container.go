@@ -9,6 +9,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"strings"
 )
 
 type ContainerApi struct {
@@ -138,29 +139,41 @@ func (containerApi *ContainerApi) GetContainerList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if list, err := utils.GetDockerContainers(); err != nil {
+
+	containers, err := utils.GetDockerContainers()
+	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
-	} else {
-		response.OkWithDetailed(response.PageResult{
-			List:     list,
-			Total:    int64(len(list)),
-			Page:     pageInfo.Page,
-			PageSize: pageInfo.PageSize,
-		}, "获取成功", c)
+		return
 	}
 
-	//if list, total, err := containerService.GetContainerInfoList(pageInfo); err != nil {
-	//	global.GVA_LOG.Error("获取失败!", zap.Error(err))
-	//	response.FailWithMessage("获取失败", c)
-	//} else {
-	//	response.OkWithDetailed(response.PageResult{
-	//		List:     list,
-	//		Total:    total,
-	//		Page:     pageInfo.Page,
-	//		PageSize: pageInfo.PageSize,
-	//	}, "获取成功", c)
-	//}
+	filteredContainers := make([]environment.Container, 0)
+	for _, container := range containers {
+		if pageInfo.ContainerId != "" && container.ContainerId != pageInfo.ContainerId {
+			continue
+		}
+		if pageInfo.ImageName != "" && !strings.Contains(container.ImageName, pageInfo.ImageName) {
+			continue
+		}
+		filteredContainers = append(filteredContainers, container)
+	}
+
+	var total = int64(len(filteredContainers))
+	var pageSize = pageInfo.PageSize
+	var page = pageInfo.Page
+	var start = (page - 1) * pageSize
+	var end = start + pageSize
+	if end > len(filteredContainers) {
+		end = len(filteredContainers)
+	}
+	var paginatedContainers = filteredContainers[start:end]
+
+	response.OkWithDetailed(response.PageResult{
+		List:     paginatedContainers,
+		Total:    total,
+		Page:     page,
+		PageSize: pageSize,
+	}, "获取成功", c)
 }
 
 // GetContainerPublic 不需要鉴权的容器管理接口
@@ -177,4 +190,70 @@ func (containerApi *ContainerApi) GetContainerPublic(c *gin.Context) {
 	response.OkWithDetailed(gin.H{
 		"info": "不需要鉴权的容器管理接口信息",
 	}, "获取成功", c)
+}
+
+// StartContainer 根据id启动容器
+// @Tags Container
+// @Summary 根据id启动容器
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data query environment.Container true "根据id启动容器"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"启动成功"}"
+// @Router /container/startContainer [get]
+func (containerApi *ContainerApi) StartContainer(c *gin.Context) {
+	id := c.Query("ID")
+
+	err := utils.StartContainerByID(id)
+	if err != nil {
+		global.GVA_LOG.Error("启动失败!", zap.Error(err))
+		response.FailWithMessage("启动失败", c)
+		return
+	} else {
+		response.OkWithMessage("启动成功", c)
+	}
+}
+
+// StopContainer 根据id停止容器
+// @Tags Container
+// @Summary 根据id停止容器
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data query environment.Container true "根据id停止容器"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"停止成功"}"
+// @Router /container/stopContainer [get]
+func (containerApi *ContainerApi) StopContainer(c *gin.Context) {
+	id := c.Query("ID")
+
+	err := utils.StopContainerByID(id)
+	if err != nil {
+		global.GVA_LOG.Error("停止失败!", zap.Error(err))
+		response.FailWithMessage("停止失败", c)
+		return
+	} else {
+		response.OkWithMessage("停止成功", c)
+	}
+}
+
+// RestartContainer 根据id重启容器
+// @Tags Container
+// @Summary 根据id重启容器
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data query environment.Container true "根据id重启容器"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"重启成功"}"
+// @Router /container/restartContainer [get]
+func (containerApi *ContainerApi) RestartContainer(c *gin.Context) {
+	id := c.Query("ID")
+
+	err := utils.RestartContainerByID(id)
+	if err != nil {
+		global.GVA_LOG.Error("重启失败!", zap.Error(err))
+		response.FailWithMessage("重启失败", c)
+		return
+	} else {
+		response.OkWithMessage("重启成功", c)
+	}
 }

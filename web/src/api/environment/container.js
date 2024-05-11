@@ -33,6 +33,54 @@ export const deleteContainer = (params) => {
 }
 
 // @Tags Container
+// @Summary 根据id启动容器
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body model.Container true "根据id启动容器"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"启动成功"}"
+// @Router /container/startContainer [get]
+export const startContainer = (params) =>{
+  return service({
+    url: '/container/startContainer',
+    method: 'get',
+    params
+  })
+}
+
+// @Tags Container
+// @Summary 根据id停止容器
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body model.Container true "根据id停止容器"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"停止成功"}"
+// @Router /container/stopContainer [get]
+export const stopContainer = (params) =>{
+  return service({
+    url: '/container/stopContainer',
+    method: 'get',
+    params
+  })
+}
+
+// @Tags Container
+// @Summary 根据id重启容器
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data body model.Container true "根据id重启容器"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"重启成功"}"
+// @Router /container/restartContainer [get]
+export const restartContainer = (params) =>{
+  return service({
+    url: '/container/restartContainer',
+    method: 'get',
+    params
+  })
+}
+
+// @Tags Container
 // @Summary 批量删除容器管理
 // @Security ApiKeyAuth
 // @accept application/json

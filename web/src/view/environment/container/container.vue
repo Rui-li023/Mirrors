@@ -42,11 +42,11 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item v-if="scope.row.status.indexOf('Up')" type="primary" link icon=""
-                      @click="startContainer(scope.row)">启动</el-dropdown-item>
+                      @click="startRow(scope.row)">启动</el-dropdown-item>
                     <el-dropdown-item v-if="scope.row.status.indexOf('Exited')" type="primary" link icon=""
-                      @click="stopContainer(scope.row)">停止</el-dropdown-item>
+                      @click="stopRow(scope.row)">停止</el-dropdown-item>
                     <el-dropdown-item v-if="scope.row.status.indexOf('Exited')" type="primary" link icon=""
-                      @click="restartContainer(scope.row)">重启</el-dropdown-item>
+                      @click="restartRow(scope.row)">重启</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -103,6 +103,9 @@ import {
   deleteContainer,
   updateContainer,
   findContainer,
+  startContainer,
+  stopContainer,
+  restartContainer,
   getContainerList
 } from '@/api/environment/container'
 
@@ -220,36 +223,36 @@ const deleteRow = (row) => {
   })
 }
 
-const startContainer = (row) => {
+const startRow = (row) => {
   let message = '确定要启动 ' + row.imageName + ' 吗?'
   ElMessageBox.confirm(message, '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    deleteContainerFunc(row)
+    startContainerFunc(row)
   })
 }
 
-const stopContainer = (row) => {
+const stopRow = (row) => {
   let message = '确定要停止 ' + row.imageName + ' 吗?'
   ElMessageBox.confirm(message, '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    deleteContainerFunc(row)
+    stopContainerFunc(row)
   })
 }
 
-const restartContainer = (row) => {
+const restartRow = (row) => {
   let message = '确定要重启 ' + row.imageName + ' 吗?'
   ElMessageBox.confirm(message, '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    deleteContainerFunc(row)
+    restartContainerFunc(row)
   })
 }
 // 行为控制标记（弹窗内部需要增还是改）
@@ -271,6 +274,42 @@ const deleteContainerFunc = async (row) => {
     getTableData()
   }
 }
+
+const startContainerFunc = async (row) => {
+  const res = await startContainer({ ID: row.containerId })
+  if (res.code === 0) {
+    ElMessage({
+      type: 'success',
+      message: '启动成功'
+    })
+    if (tableData.value.length === 1 && page.value > 1) {
+      page.value--
+    }
+    getTableData()
+  }
+}
+const stopContainerFunc = async (row) => {
+  const res = await stopContainer({ ID: row.containerId })
+  if (res.code === 0) {
+    ElMessage({
+      type: 'success',
+      message: '停止成功'
+    })
+    getTableData()
+  }
+}
+
+const restartContainerFunc = async (row) => {
+  const res = await restartContainer({ ID: row.containerId })
+  if (res.code === 0) {
+    ElMessage({
+      type: 'success',
+      message: '重启成功'
+    })
+    getTableData()
+  }
+}
+
 
 // 弹窗控制标记
 const dialogFormVisible = ref(false)

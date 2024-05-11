@@ -1,9 +1,13 @@
 package utils
 
 import (
+	"context"
 	"encoding/json"
-	"fmt"
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/client"
+	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/environment"
+	"go.uber.org/zap"
 	"os/exec"
 	"strings"
 )
@@ -45,7 +49,7 @@ func GetDockerImages() ([]environment.Images, error) {
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		fmt.Println(err)
+		global.GVA_LOG.Error("运行查询命令失败!", zap.Error(err))
 		return nil, err
 	}
 
@@ -59,7 +63,7 @@ func GetDockerImages() ([]environment.Images, error) {
 		var image DockerImage
 		err = json.Unmarshal([]byte(line), &image)
 		if err != nil {
-			fmt.Println(err)
+			global.GVA_LOG.Error("转换JSON失败!", zap.Error(err))
 			continue
 		}
 
@@ -75,7 +79,6 @@ func GetDockerImages() ([]environment.Images, error) {
 	return images, nil
 }
 
-// GetDockerContainers returns a list of ContainerInfo with details of all running containers
 func GetDockerContainers() ([]environment.Container, error) {
 
 	// Run the docker ps command
@@ -83,7 +86,8 @@ func GetDockerContainers() ([]environment.Container, error) {
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		fmt.Println(err)
+		global.GVA_LOG.Error("运行查询命令失败!", zap.Error(err))
+
 		return nil, err
 	}
 
@@ -94,22 +98,91 @@ func GetDockerContainers() ([]environment.Container, error) {
 		if line == "" {
 			continue
 		}
-		var container Container
-		err = json.Unmarshal([]byte(line), &container)
+		var container_ Container
+		err = json.Unmarshal([]byte(line), &container_)
 		if err != nil {
-			fmt.Println(err)
+			global.GVA_LOG.Error("转换JSON失败!", zap.Error(err))
+
 			continue
 		}
-
-		container_ := environment.Container{
-			ContainerId: container.ID,
-			ImageName:   container.Image,
-			Status:      container.Status,
-			Create:      container.CreatedAt,
-			Command:     container.Command,
-			Ports:       container.Ports,
+		container__ := environment.Container{
+			ContainerId: container_.ID,
+			ImageName:   container_.Image,
+			Status:      container_.Status,
+			Create:      container_.CreatedAt,
+			Command:     container_.Command,
+			Ports:       container_.Ports,
 		}
-		containers = append(containers, container_)
+		containers = append(containers, container__)
 	}
 	return containers, nil
+}
+
+func StartContainerByID(id string) error {
+	// Create a new Docker client
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return err
+	}
+
+	// Get the container by ID
+	container_, err := cli.ContainerInspect(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	// Start the container
+	err = cli.ContainerStart(ctx, container_.ID, container.StartOptions{})
+	if err != nil {
+		return err
+	}
+	global.GVA_LOG.Info("Container started successfully: ", zap.String("id", id))
+	return nil
+}
+
+func StopContainerByID(id string) error {
+	// Create a new Docker client
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return err
+	}
+
+	// Get the container by ID
+	container_, err := cli.ContainerInspect(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	// Stop the container
+	err = cli.ContainerStop(ctx, container_.ID, container.StopOptions{})
+	if err != nil {
+		return err
+	}
+	global.GVA_LOG.Info("Container stopped successfully: ", zap.String("id", id))
+	return nil
+}
+
+func RestartContainerByID(id string) error {
+	// Create a new Docker client
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return err
+	}
+
+	// Get the container by ID
+	container_, err := cli.ContainerInspect(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	// Restart the container
+	err = cli.ContainerRestart(ctx, container_.ID, container.StopOptions{})
+	if err != nil {
+		return err
+	}
+	global.GVA_LOG.Info("Container restarted successfully: ", zap.String("id", id))
+	return nil
 }
