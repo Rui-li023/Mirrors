@@ -27,14 +27,14 @@ var containerService = service.ServiceGroupApp.EnvironmentServiceGroup.Container
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"创建成功"}"
 // @Router /container/createContainer [post]
 func (containerApi *ContainerApi) CreateContainer(c *gin.Context) {
-	var container environment.Container
+	var container environment.ContainerConfig
 	err := c.ShouldBindJSON(&container)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 
-	if err := containerService.CreateContainer(&container); err != nil {
+	if err := utils.CreateContainer(container); err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Error(err))
 		response.FailWithMessage("创建失败", c)
 	} else {
@@ -53,7 +53,7 @@ func (containerApi *ContainerApi) CreateContainer(c *gin.Context) {
 // @Router /container/deleteContainer [delete]
 func (containerApi *ContainerApi) DeleteContainer(c *gin.Context) {
 	ID := c.Query("ID")
-	if err := containerService.DeleteContainer(ID); err != nil {
+	if err := utils.RemoveContainerByID(ID); err != nil {
 		global.GVA_LOG.Error("删除失败!", zap.Error(err))
 		response.FailWithMessage("删除失败", c)
 	} else {

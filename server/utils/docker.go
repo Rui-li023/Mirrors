@@ -6,9 +6,12 @@ import (
 	"fmt"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/image"
+	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
+	"github.com/docker/go-connections/nat"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/environment"
+	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"go.uber.org/zap"
 	"os/exec"
 	"strings"
@@ -89,7 +92,6 @@ func GetDockerContainers() ([]environment.Container, error) {
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		global.GVA_LOG.Error("运行查询命令失败!", zap.Error(err))
-
 		return nil, err
 	}
 
@@ -104,7 +106,6 @@ func GetDockerContainers() ([]environment.Container, error) {
 		err = json.Unmarshal([]byte(line), &container_)
 		if err != nil {
 			global.GVA_LOG.Error("转换JSON失败!", zap.Error(err))
-
 			continue
 		}
 		container__ := environment.Container{
@@ -114,6 +115,7 @@ func GetDockerContainers() ([]environment.Container, error) {
 			Create:      container_.CreatedAt,
 			Command:     container_.Command,
 			Ports:       container_.Ports,
+			Name:        container_.Names,
 		}
 		containers = append(containers, container__)
 	}
@@ -163,6 +165,31 @@ func StopContainerByID(id string) error {
 		return err
 	}
 	global.GVA_LOG.Info("Container stopped successfully: ", zap.String("id", id))
+	return nil
+}
+
+func RemoveContainerByID(id string) error {
+	// Create a new Docker client
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return err
+	}
+
+	// Get the container by ID
+	container_, err := cli.ContainerInspect(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	// Remove the container
+	err = cli.ContainerRemove(ctx, container_.ID, container.RemoveOptions{
+		Force: true,
+	})
+	if err != nil {
+		return err
+	}
+	global.GVA_LOG.Info("Container removed successfully: ", zap.String("id", id))
 	return nil
 }
 
@@ -228,5 +255,54 @@ func PullImage(imageName, imageTag string) error {
 	}
 
 	global.GVA_LOG.Info("Image pulled successfully: ", zap.String("image", fmt.Sprintf("%s:%s", imageName, imageTag)))
+	return nil
+}
+
+// CreateContainer 创建容器
+func CreateContainer(containerConfig environment.ContainerConfig) error {
+	// 创建 Docker 客户端
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return err
+	}
+	// 创建容器配置
+	config := &container.Config{
+		Image: containerConfig.ImageName,
+		Cmd:   containerConfig.Cmds,
+	}
+	hostConfig := &container.HostConfig{}
+	portBindings := nat.PortMap{}
+
+	for _, pm := range containerConfig.PortMappings {
+		containerPort := nat.Port(fmt.Sprintf("%s/%s", pm.ContainerPort, pm.ContainerType))
+		fmt.Println(containerPort)
+		fmt.Println(pm.HostPort)
+
+		portBindings[containerPort] = []nat.PortBinding{
+			{
+				HostIP:   "0.0.0.0",
+				HostPort: pm.HostPort,
+			},
+		}
+	}
+	hostConfig.PortBindings = portBindings
+	// Create a new networking config (optional)
+	networkingConfig := &network.NetworkingConfig{}
+
+	// Create a new platform config (optional)
+	platform := &ocispec.Platform{}
+
+	// 创建容器
+	resp, err := cli.ContainerCreate(context.Background(), config, hostConfig, networkingConfig, platform, containerConfig.ContainerName)
+	if err != nil {
+		return err
+	}
+
+	// 启动容器
+	err = cli.ContainerStart(context.Background(), resp.ID, container.StartOptions{})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

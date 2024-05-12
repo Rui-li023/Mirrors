@@ -28,10 +28,10 @@
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column> -->
 
-        <el-table-column align="left" label="容器ID" prop="containerId" min-width="120" />
-        <el-table-column align="left" label="镜像名称" prop="imageName" min-width="200" />
-        <el-table-column align="left" label="启动命令" prop="command" min-width="100" />
-        <el-table-column align="left" label="创建时间" prop="create" width="230" />
+        <el-table-column align="left" label="容器ID" prop="containerId" width="120" />
+        <el-table-column align="left" label="容器名字" prop="name" min-width="80" />
+        <el-table-column align="left" label="镜像名称" prop="imageName" min-width="180" />
+        <el-table-column align="left" label="启动命令" prop="command" min-width="150" />
         <el-table-column align="left" label="运行状态" prop="status" width="200" />
         <el-table-column align="left" label="端口" prop="ports" min-width="300" />
         <el-table-column align="left" label="操作" fixed="right" min-width="160">
@@ -78,10 +78,31 @@
           <el-input v-model="formData.containerId" :clearable="true" placeholder="请输入容器ID" />
         </el-form-item> -->
         <el-form-item label="镜像名称:" prop="imageName">
-          <el-input v-model="formData.imageName" :clearable="true" placeholder="请输入镜像名称" />
+          <el-select
+            v-model="formData.imageName"
+            placeholder="请输入镜像名称"
+          >
+            <el-option
+              v-for="item in options1"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
+
+        <el-form-item label="容器名称:" prop="containerName">
+          <el-input v-model="formData.containerName" :clearable="true" placeholder="请输入容器名称" />
+        </el-form-item>
+
+  
+
         <el-form-item label="启动命令:" prop="command">
-          <el-input v-model="formData.command" :clearable="true" placeholder="请输入启动命令" />
+          <el-button type="primary" @click="addInput">+</el-button>
+          <el-button type="primary" @click="removeInput">-</el-button>
+          <div v-for="(input, index1) in formData.cmds" :key="index1" style="width: 100%; margin-top: 10px;">
+            <el-input v-model="formData.cmds[index1]"  placeholder="请输入启动命令"></el-input>
+          </div>
         </el-form-item>
         <!-- <el-form-item label="创建时间:" prop="create">
           <el-input v-model="formData.create" :clearable="true" placeholder="请输入创建时间" />
@@ -89,9 +110,40 @@
         <el-form-item label="运行状态:" prop="status">
           <el-input v-model="formData.status" :clearable="true" placeholder="请输入运行状态" />
         </el-form-item> -->
-        <el-form-item label="端口:" prop="ports">
+        <!-- <el-form-item label="端口:" prop="ports">
           <el-input v-model="formData.ports" :clearable="true" placeholder="请输入端口" />
+        </el-form-item> -->
+
+        <el-form-item label="端口:" prop="ports">
+          <el-button type="primary" @click="addPortMapping">+</el-button>
+          <el-button type="danger" @click="removePortMapping(index)">-</el-button>
+
+          <div v-for="(portMapping, index) in formData.portMappings" :key="index" style="width: 100%; margin-top: 10px;">
+            <el-input v-model="portMapping.containerPort" placeholder="容器端口" style="width: 33%;"></el-input>
+            <!-- <el-input v-model="portMapping.containerType" placeholder="传输类型" style="width: 33%;"></el-input> -->
+            
+            <el-select
+              v-model="portMapping.containerType"
+              placeholder="传输类型"
+              style="width: 33%;"
+            >
+              <el-option
+                :key="'TCP'"
+                :label="'TCP'"
+                :value="'tcp'"
+              >TCP</el-option>
+              <el-option
+                :key="'UDP'"
+                :label="'UDP'"
+                :value="'udp'"
+              >UDP</el-option>
+            </el-select>
+
+            <el-input v-model="portMapping.hostPort" placeholder="主机端口" style="width: 33%;"></el-input>
+          
+          </div>
         </el-form-item>
+
       </el-form>
     </el-drawer>
   </div>
@@ -106,8 +158,12 @@ import {
   startContainer,
   stopContainer,
   restartContainer,
-  getContainerList
+  getContainerList,
 } from '@/api/environment/container'
+
+import {
+  getImagesList
+} from '@/api/environment/envImages'
 
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict, filterDataSource, ReturnArrImg, onDownloadFile } from '@/utils/format'
@@ -120,12 +176,11 @@ defineOptions({
 
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({
-  containerId: '',
   imageName: '',
-  command: '',
-  create: '',
-  status: '',
+  containerName:'',
+  cmds:[],
   ports: '',
+  portMappings: []
 })
 
 
@@ -318,21 +373,45 @@ const dialogFormVisible = ref(false)
 const openDialog = () => {
   type.value = 'create'
   dialogFormVisible.value = true
+  getImagesNameList()
 }
+
 
 // 关闭弹窗
 const closeDialog = () => {
   dialogFormVisible.value = false
   formData.value = {
-    containerId: '',
     imageName: '',
-    command: '',
-    create: '',
-    status: '',
-    ports: '',
+    containerName:'',
+    cmds:[],
+    portMappings: [],
   }
 }
 
+const getImagesNameList = async () =>{
+  options1.value=[]
+  let res = await getImagesList()
+  res.data.list.forEach(element => {
+    options1.value.push({'label': element['repository'],'value': element['repository']})
+  });
+}
+
+const addInput = ()=> {
+  // console.log(formData)
+  formData.value.cmds.push('')
+}
+
+const removeInput = ()=> {
+  // console.log(formData)
+  formData.value.cmds.pop()
+}
+
+const addPortMapping = () => {
+      formData.value.portMappings.push({ containerPort: '', hostPort: '', containerType:'tcp' })
+    }
+const removePortMapping = (index) => {
+      formData.value.portMappings.splice(index, 1)
+    }
 // 弹窗确定
 const enterDialog = async () => {
   elFormRef.value?.validate(async (valid) => {
@@ -369,9 +448,13 @@ const enterDialog = async () => {
 //     dialogFormVisible.value = true
 //   }
 // }
-
+const options1 = ref([
+  {
+    value: 'nginx',
+    label: 'nginx',
+  },
+])
 
 </script>
 
 <style></style>
-

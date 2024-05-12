@@ -1,17 +1,11 @@
 <template>
   <div class="mt-2">
     <el-row :gutter="10">
-      <el-col :span="12">
+      <el-col :span="22" :offset="1">
         <el-card>
-          <template #header>
-            <el-divider>gin-vue-admin</el-divider>
-          </template>
           <div>
             <el-row>
-              <el-col
-                :span="8"
-                :offset="8"
-              >
+              <el-col :span="4">
                 <a href="https://github.com/flipped-aurora/gin-vue-admin">
                   <img
                     class="org-img dom-center"
@@ -20,108 +14,23 @@
                   >
                 </a>
               </el-col>
-            </el-row>
-            <el-row :gutter="10">
-              <el-col :span="8">
-                <a href="https://github.com/flipped-aurora/gin-vue-admin">
-                  <img
-                    class="dom-center"
-                    src="https://img.shields.io/github/watchers/flipped-aurora/gin-vue-admin.svg?label=Watch"
-                    alt=""
-                  >
-                </a>
-              </el-col>
-              <el-col :span="8">
-                <a href="https://github.com/flipped-aurora/gin-vue-admin">
-                  <img
-                    class="dom-center"
-                    src="https://img.shields.io/github/stars/flipped-aurora/gin-vue-admin.svg?style=social"
-                    alt=""
-                  >
-                </a>
-              </el-col>
-              <el-col :span="8">
-                <a href="https://github.com/flipped-aurora/gin-vue-admin">
-                  <img
-                    class="dom-center"
-                    src="https://img.shields.io/github/forks/flipped-aurora/gin-vue-admin.svg?label=Fork"
-                    alt=""
-                  >
-                </a>
+              <el-col :span="18" >
+                <p style="font-size: larger;">
+                  在当今的数字化时代，网络安全已成为防御体系中的关键一环。随着网络攻击手段日益狡猾，传统安全防御机制已不再能够满足当前的需求。我们需要诱导网络攻击并尝试反制溯源，应对这一挑战，我们开发了创新性的“多维协议蜜罐系统”。该系统不仅整合了多种网络协议蜜罐、数据库蜜罐和工控蜜罐，还引入了虚拟主机功能，通过Docker技术实现虚拟化，能在单一主机上部署众多蜜罐，甚至模拟出大量虚拟网络设备。
+                </p>
+              <br/>
+                <p style="font-size: larger;"
+                  >本系统采用了前后端分离的技术架构，其后台管理系统界面直观易用，允许安全管理员轻松监控和管理各类蜜罐的运行状况，新建和删除蜜罐。通过实时捕捉并分析攻击者行为，我们的系统能够提供深入的攻击见解，帮助安全团队更全面地理解潜在安全威胁，并优化其防御策略。 </p
+                ><br/><p style="font-size: larger;"
+                  >我们的蜜罐系统不仅仅是一个被动防御工具，它还能主动搜集攻击者信息。凭借精确的日志记录和智能分析功能，它为用户提供了全面的安全保障，并为未来安全研究积累了宝贵的数据。通过模拟真实网络环境，我们的系统能够诱导攻击者暴露其攻击手法，甚至帮助追踪到攻击者本身，为全球网络安全作出贡献。</p
+                >
               </el-col>
             </el-row>
-          </div>
-        </el-card>
-        <el-card style="margin-top: 20px">
-          <template #header>
-            <div>flipped-aurora团队</div>
-          </template>
-          <div>
-            <el-row>
-              <el-col
-                :span="8"
-                :offset="8"
-              >
-                <a href="https://github.com/flipped-aurora">
-                  <img
-                    class="org-img dom-center"
-                    src="@/assets/flipped-aurora.png"
-                    alt="flipped-aurora"
-                  >
-                </a>
-              </el-col>
-            </el-row>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-              <div
-                v-for="(item, index) in members"
-                :key="index"
-                :span="8"
-              >
-                <a :href="item.html_url" class="flex items-center">
-                  <img
-                    class="w-8 h-8 rounded-full"
-                    :src="item.avatar_url"
-                  >
-                  <a
-                    class=" text-blue-700 ml-2 text-xl  font-bold  font-sans  "
-                    style=""
-                  >{{ item.login }}</a>
-                </a>
-              </div>
-            </div>
+
           </div>
         </el-card>
       </el-col>
-      <el-col :span="12">
-        <el-card>
-          <template #header>
-            <div>提交记录</div>
-          </template>
-          <div>
-            <el-timeline>
-              <el-timeline-item
-                v-for="(item,index) in dataTimeline"
-                :key="index"
-                :timestamp="item.from"
-                placement="top"
-              >
-                <el-card>
-                  <h4>{{ item.title }}</h4>
-                  <p>{{ item.message }}</p>
-                </el-card>
-              </el-timeline-item>
-            </el-timeline>
-          </div>
-          <el-button
-            class="load-more"
-            type="primary"
-            link
-            @click="loadMore"
-          >
-            Load more
-          </el-button>
-        </el-card>
-      </el-col>
+
     </el-row>
   </div>
 </template>
