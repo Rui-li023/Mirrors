@@ -35,9 +35,7 @@
 
         </el-form-item>
         <el-form-item label="目的端口" prop="dest_port">
-            
              <el-input v-model.number="searchInfo.dest_port" placeholder="搜索条件" />
-
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="search" @click="onSubmit">查询</el-button>
@@ -48,7 +46,7 @@
     <div class="gva-table-box">
         <div class="gva-btn-list">
             <!-- <el-button type="primary" icon="plus" @click="openDialog">新增</el-button> -->
-            <el-button icon="delete" style="margin-left: 10px;" :disabled="!multipleSelection.length" @click="onDelete">删除</el-button>
+            <!-- <el-button icon="delete" style="margin-left: 10px;" :disabled="!multipleSelection.length" @click="onDelete">删除</el-button> -->
         </div>
         <el-table
         ref="multipleTable"
@@ -58,30 +56,32 @@
         row-key="ID"
         @selection-change="handleSelectionChange"
         >
-        <el-table-column type="selection" width="55" />
+        <el-table-column type="index" width="55" />
         
         <el-table-column align="left" label="日期" width="180">
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
         
         <el-table-column align="left" label="源IP" prop="source_ip" width="120" />
-        <el-table-column align="left" label="源端口" prop="source_port" width="120" />
+        <el-table-column align="left" label="源端口" prop="source_port" width="100" />
+        <el-table-column align="left" label="服务" prop="service" width="120"/>
+
         <el-table-column align="left" label="协议" prop="protocol" width="120">
             <template #default="scope">
             {{ filterDict(scope.row.protocol,protocolOptions) }}
             </template>
         </el-table-column>
         <el-table-column align="left" label="目的IP" prop="dest_ip" width="120" />
-        <el-table-column align="left" label="目的端口" prop="dest_port" width="120" />
-                      <el-table-column label="详细内容" width="200">
+        <el-table-column align="left" label="目的端口" prop="dest_port" width="100" />
+                      <el-table-column label="详细内容" min-width="200" :show-overflow-tooltip='true'>
                          <template #default="scope">
-                            [富文本内容]
+                            <span>{{scope.row.detail}}</span>
                          </template>
                       </el-table-column>
-        <el-table-column align="left" label="操作" fixed="right" min-width="240">
+        <el-table-column align="left" label="操作" fixed="right" min-width="100" >
             <template #default="scope">
             <el-button type="primary" link icon="edit" class="table-button" @click="updateScanlogFunc(scope.row)">变更</el-button>
-            <el-button type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
+            <!-- <el-button type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button> -->
             </template>
         </el-table-column>
         </el-table>

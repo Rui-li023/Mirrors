@@ -24,7 +24,6 @@ func (s *ContainerRouter) InitContainerRouter(Router *gin.RouterGroup, PublicRou
 		containerRouter.GET("startContainer", containerApi.StartContainer)
 		containerRouter.GET("stopContainer", containerApi.StopContainer)
 		containerRouter.GET("restartContainer", containerApi.RestartContainer)
-
 	}
 	{
 		containerRouterWithoutRecord.GET("findContainer", containerApi.FindContainer)       // 根据ID获取容器管理
@@ -32,5 +31,6 @@ func (s *ContainerRouter) InitContainerRouter(Router *gin.RouterGroup, PublicRou
 	}
 	{
 		containerRouterWithoutAuth.GET("getContainerPublic", containerApi.GetContainerPublic) // 获取容器管理列表
+
 	}
 }

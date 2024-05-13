@@ -17,7 +17,7 @@ func (s *ScanlogRouter) InitScanlogRouter(Router *gin.RouterGroup, PublicRouter 
 
 	var scanlogApi = v1.ApiGroupApp.Attack_awarenessApiGroup.ScanlogApi
 	{
-		scanlogRouter.POST("createScanlog", scanlogApi.CreateScanlog)             // 新建扫描感知
+		//scanlogRouter.POST("createScanlog", scanlogApi.CreateScanlog)             // 新建扫描感知
 		scanlogRouter.DELETE("deleteScanlog", scanlogApi.DeleteScanlog)           // 删除扫描感知
 		scanlogRouter.DELETE("deleteScanlogByIds", scanlogApi.DeleteScanlogByIds) // 批量删除扫描感知
 		scanlogRouter.PUT("updateScanlog", scanlogApi.UpdateScanlog)              // 更新扫描感知
@@ -28,6 +28,6 @@ func (s *ScanlogRouter) InitScanlogRouter(Router *gin.RouterGroup, PublicRouter 
 	}
 	{
 		scanlogRouterWithoutAuth.GET("getScanlogPublic", scanlogApi.GetScanlogPublic) // 获取扫描感知列表
-		scanlogRouterWithoutAuth.GET("createScanlog", scanlogApi.CreateScanlog)
+		scanlogRouterWithoutAuth.POST("createScanlog", scanlogApi.CreateScanlog)
 	}
 }

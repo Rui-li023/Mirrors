@@ -112,7 +112,6 @@ func GetDockerContainers() ([]environment.Container, error) {
 			ContainerId: container_.ID,
 			ImageName:   container_.Image,
 			Status:      container_.Status,
-			Create:      container_.CreatedAt,
 			Command:     container_.Command,
 			Ports:       container_.Ports,
 			Name:        container_.Names,

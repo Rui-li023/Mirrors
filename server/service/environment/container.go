@@ -33,7 +33,7 @@ func (containerService *ContainerService) DeleteContainerByIds(IDs []string) (er
 // UpdateContainer 更新容器管理记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (containerService *ContainerService) UpdateContainer(container environment.Container) (err error) {
-	err = global.GVA_DB.Model(&environment.Container{}).Where("id = ?", container.ID).Updates(&container).Error
+	err = global.GVA_DB.Model(&environment.Container{}).Where("id = ?", container.ContainerId).Updates(&container).Error
 	return err
 }
 

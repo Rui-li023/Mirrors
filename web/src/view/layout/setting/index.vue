@@ -44,15 +44,14 @@
             <div>色弱模式</div>
             <el-switch v-model="config.weakness" @change="appStore.toggleWeakness" />
           </div>
-
-          <div class="flex items-center justify-between">
-            <div>显示标签页</div>
-            <el-switch v-model="config.showTabs" @change="appStore.toggleTabs" />
-          </div>
+            <!-- <div class="flex items-center justify-between">
+              <div>显示标签页</div>
+              <el-switch v-model="config.showTabs" @change="appStore.toggleTabs" />
+            </div> -->
         </div>
       </div>
 
-      <div class="mb-8">
+      <!-- <div class="mb-8">
         <div class=" text-gray-800 dark:text-gray-100">
           layout 大小配置
         </div>
@@ -77,7 +76,7 @@
         请注意，所有配置请保存到本地文件的 <el-tag>config.json</el-tag> 文件中，否则刷新页面后会丢失配置
       </el-alert>
 
-      <el-button type="primary" class="mt-4 " @click="copyConfig">复制配置json</el-button>
+      <el-button type="primary" class="mt-4 " @click="copyConfig">复制配置json</el-button> -->
     </div>
   </el-drawer>
 </template>

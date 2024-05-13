@@ -21,7 +21,7 @@ const { config } = storeToRefs(appStore)
 defineProps({
   height: {
     type: String,
-    default: '128px',
+    default: '100%',
   },
 })
 const dotColor = computed(() => {

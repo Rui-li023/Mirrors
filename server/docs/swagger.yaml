@@ -1,4 +1,36 @@
 definitions:
+  attack_awareness.Scanlog:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      dest_ip:
+        description: 目的IP
+        type: string
+      dest_port:
+        description: 目的端口
+        type: integer
+      detail:
+        description: 详细内容
+        type: string
+      protocol:
+        description: 协议
+        type: string
+      service:
+        type: string
+      source_ip:
+        description: 源IP
+        type: string
+      source_port:
+        description: 源端口
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
   config.AliyunOSS:
     properties:
       access-key-id:
@@ -615,6 +647,52 @@ definitions:
         type: boolean
       stacktrace-key:
         description: 栈名
+        type: string
+    type: object
+  environment.Container:
+    properties:
+      command:
+        description: 启动命令
+        type: string
+      containerId:
+        description: global.GVA_MODEL
+        type: string
+      imageName:
+        description: 镜像名称
+        type: string
+      name:
+        description: 端口
+        type: string
+      ports:
+        description: 端口
+        type: string
+      status:
+        description: Create      string `json:"create" form:"create" gorm:"column:create;comment:;size:256;"`                 //创建时间
+        type: string
+    type: object
+  environment.Images:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      created_since:
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      image_Id:
+        description: 镜像ID
+        type: string
+      repository:
+        description: 仓库
+        type: string
+      size:
+        type: string
+      tag:
+        description: tag
+        type: string
+      updatedAt:
+        description: 更新时间
         type: string
     type: object
   example.ExaCustomer:
@@ -2698,6 +2776,323 @@ paths:
       summary: 获取权限列表
       tags:
       - Casbin
+  /container/createContainer:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建容器管理
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/environment.Container'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建容器管理
+      tags:
+      - Container
+  /container/deleteContainer:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除容器管理
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/environment.Container'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除容器管理
+      tags:
+      - Container
+  /container/deleteContainerByIds:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除容器管理
+      tags:
+      - Container
+  /container/findContainer:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 启动命令
+        in: query
+        name: command
+        type: string
+      - description: global.GVA_MODEL
+        in: query
+        name: containerId
+        type: string
+      - description: 镜像名称
+        in: query
+        name: imageName
+        type: string
+      - description: 端口
+        in: query
+        name: name
+        type: string
+      - description: 端口
+        in: query
+        name: ports
+        type: string
+      - description: Create      string `json:"create" form:"create" gorm:"column:create;comment:;size:256;"`                 //创建时间
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询容器管理
+      tags:
+      - Container
+  /container/getContainerList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: containerId
+        type: string
+      - in: query
+        name: imageName
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取容器管理列表
+      tags:
+      - Container
+  /container/getContainerPublic:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: containerId
+        type: string
+      - in: query
+        name: imageName
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 不需要鉴权的容器管理接口
+      tags:
+      - Container
+  /container/restartContainer:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 启动命令
+        in: query
+        name: command
+        type: string
+      - description: global.GVA_MODEL
+        in: query
+        name: containerId
+        type: string
+      - description: 镜像名称
+        in: query
+        name: imageName
+        type: string
+      - description: 端口
+        in: query
+        name: name
+        type: string
+      - description: 端口
+        in: query
+        name: ports
+        type: string
+      - description: Create      string `json:"create" form:"create" gorm:"column:create;comment:;size:256;"`                 //创建时间
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"重启成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 根据id重启容器
+      tags:
+      - Container
+  /container/startContainer:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 启动命令
+        in: query
+        name: command
+        type: string
+      - description: global.GVA_MODEL
+        in: query
+        name: containerId
+        type: string
+      - description: 镜像名称
+        in: query
+        name: imageName
+        type: string
+      - description: 端口
+        in: query
+        name: name
+        type: string
+      - description: 端口
+        in: query
+        name: ports
+        type: string
+      - description: Create      string `json:"create" form:"create" gorm:"column:create;comment:;size:256;"`                 //创建时间
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"启动成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 根据id启动容器
+      tags:
+      - Container
+  /container/stopContainer:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 启动命令
+        in: query
+        name: command
+        type: string
+      - description: global.GVA_MODEL
+        in: query
+        name: containerId
+        type: string
+      - description: 镜像名称
+        in: query
+        name: imageName
+        type: string
+      - description: 端口
+        in: query
+        name: name
+        type: string
+      - description: 端口
+        in: query
+        name: ports
+        type: string
+      - description: Create      string `json:"create" form:"create" gorm:"column:create;comment:;size:256;"`                 //创建时间
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"停止成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 根据id停止容器
+      tags:
+      - Container
+  /container/updateContainer:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新容器管理
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/environment.Container'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新容器管理
+      tags:
+      - Container
   /customer/customer:
     delete:
       consumes:
@@ -3070,6 +3465,218 @@ paths:
       summary: 上传文件示例
       tags:
       - ExaFileUploadAndDownload
+  /images/createImages:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建镜像
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/environment.Images'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建镜像
+      tags:
+      - Images
+  /images/deleteImages:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除镜像
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/environment.Images'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除镜像
+      tags:
+      - Images
+  /images/deleteImagesByIds:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除镜像
+      tags:
+      - Images
+  /images/findImages:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - in: query
+        name: created_since
+        type: string
+      - description: 镜像ID
+        in: query
+        name: image_Id
+        type: string
+      - description: 仓库
+        in: query
+        name: repository
+        type: string
+      - in: query
+        name: size
+        type: string
+      - description: tag
+        in: query
+        name: tag
+        type: string
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询镜像
+      tags:
+      - Images
+  /images/getImagesList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: endCreatedAt
+        type: string
+      - in: query
+        name: image_Id
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: repository
+        type: string
+      - in: query
+        name: startCreatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取镜像列表
+      tags:
+      - Images
+  /images/getImagesPublic:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: endCreatedAt
+        type: string
+      - in: query
+        name: image_Id
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: repository
+        type: string
+      - in: query
+        name: startCreatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 不需要鉴权的镜像接口
+      tags:
+      - Images
+  /images/updateImages:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新镜像
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/environment.Images'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新镜像
+      tags:
+      - Images
   /init/checkdb:
     post:
       produces:
@@ -3394,6 +4001,245 @@ paths:
       summary: 更新菜单
       tags:
       - Menu
+  /scanlog/createScanlog:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建扫描感知
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/attack_awareness.Scanlog'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"创建成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 创建扫描感知
+      tags:
+      - Scanlog
+  /scanlog/deleteScanlog:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除扫描感知
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/attack_awareness.Scanlog'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 删除扫描感知
+      tags:
+      - Scanlog
+  /scanlog/deleteScanlogByIds:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"批量删除成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除扫描感知
+      tags:
+      - Scanlog
+  /scanlog/findScanlog:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 目的IP
+        in: query
+        name: dest_ip
+        type: string
+      - description: 目的端口
+        in: query
+        name: dest_port
+        type: integer
+      - description: 详细内容
+        in: query
+        name: detail
+        type: string
+      - description: 协议
+        in: query
+        name: protocol
+        type: string
+      - in: query
+        name: service
+        type: string
+      - description: 源IP
+        in: query
+        name: source_ip
+        type: string
+      - description: 源端口
+        in: query
+        name: source_port
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询扫描感知
+      tags:
+      - Scanlog
+  /scanlog/getScanlogList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: dest_ip
+        type: string
+      - in: query
+        name: dest_port
+        type: integer
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: protocol
+        type: string
+      - in: query
+        name: source_ip
+        type: string
+      - in: query
+        name: source_port
+        type: integer
+      - in: query
+        name: startCreatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取扫描感知列表
+      tags:
+      - Scanlog
+  /scanlog/getScanlogPublic:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: dest_ip
+        type: string
+      - in: query
+        name: dest_port
+        type: integer
+      - in: query
+        name: endCreatedAt
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: protocol
+        type: string
+      - in: query
+        name: source_ip
+        type: string
+      - in: query
+        name: source_port
+        type: integer
+      - in: query
+        name: startCreatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 不需要鉴权的扫描感知接口
+      tags:
+      - Scanlog
+  /scanlog/updateScanlog:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新扫描感知
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/attack_awareness.Scanlog'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"更新成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 更新扫描感知
+      tags:
+      - Scanlog
   /sysDictionary/createSysDictionary:
     post:
       consumes:

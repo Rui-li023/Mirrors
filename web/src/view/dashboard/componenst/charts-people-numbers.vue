@@ -32,107 +32,48 @@ const  prop = defineProps({
 })
 const  graphicFactory = (side) => {
   return {
-    type: 'text',
-    bottom: '8',
-    ...side,
-    style: {
-      text: '',
-      textAlign: 'center',
-      fill: '#4E5969',
-      fontSize: 12,
+      type: 'text',
+      bottom: '8',
+      ...side,
+      style: {
+        text: '',
+        textAlign: 'center',
+        fill: '#4E5969',
+        fontSize: 12,
+      },
+    };
+  }
+  const graphicElements = ref([
+    graphicFactory({ left: '5%' }),
+    graphicFactory({ right: 0 }),
+  ]);
+  const { chartOption } = useChartOption(() => {
+    return {
+    tooltip: {
+      trigger: 'item'
     },
-  };
-}
-const graphicElements = ref([
-  graphicFactory({ left: '5%' }),
-  graphicFactory({ right: 0 }),
-]);
-const { chartOption } = useChartOption(() => {
-  return {
-    grid: {
-      left: '40',
-      right: '0',
-      top: '10',
-      bottom: '30',
+    legend: {
+      orient: 'vertical',
+      left: 'left'
     },
-    xAxis: {
-      type: 'category',
-      offset: 2,
-      show : false,
-      boundaryGap: false,
-      axisLine: {
-        show: false,
-      },
-      axisTick: {
-        show: false,
-      },
-      splitLine: {
-        show: false,
-      },
-
-    },
-    yAxis: {
-      type: 'value',
-      show: false,
-      axisLine: {
-        show: false,
-      },
-      axisLabel: {
-        show: false
-      },
-      splitLine: {
-        show: false,
-      },
-    },
-    graphic: {
-      elements: graphicElements.value,
-    },
+    zoom: 2,
     series: [
       {
+        name: 'Access From',
+        type: 'pie',
+        radius: '50%',
+        center: ['65%', '50%'],
         data: prop.data,
-        type: 'line',
-        smooth: true,
-        symbolSize: 12,
         emphasis: {
-          focus: 'series',
           itemStyle: {
-            borderWidth: 2,
-          },
-        },
-        lineStyle: {
-          width: 3,
-          color: new graphic.LinearGradient(0, 0, 1, 0, [
-            {
-              offset: 0,
-              color: `${config.value.primaryColor}32`,
-            },
-            {
-              offset: 0.5,
-              color: `${config.value.primaryColor}64`,
-            },
-            {
-              offset: 1,
-              color: `${config.value.primaryColor}FF`,
-            },
-          ]),
-        },
-        showSymbol: false,
-        areaStyle: {
-          opacity: 0.8,
-          color: new graphic.LinearGradient(0, 0, 0, 1, [
-            {
-              offset: 0,
-              color: `${config.value.primaryColor}20`,
-            },
-            {
-              offset: 1,
-              color: `${config.value.primaryColor}08`,
-            },
-          ]),
-        },
-      },
-    ],
-  };
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        }
+      }
+    ]
+  }
 });
 </script>
 
