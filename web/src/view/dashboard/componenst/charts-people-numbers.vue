@@ -48,6 +48,7 @@ const  graphicFactory = (side) => {
     graphicFactory({ right: 0 }),
   ]);
   const { chartOption } = useChartOption(() => {
+    console.log(prop.data)
     return {
     tooltip: {
       trigger: 'item'

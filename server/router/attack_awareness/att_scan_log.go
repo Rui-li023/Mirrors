@@ -21,6 +21,7 @@ func (s *ScanlogRouter) InitScanlogRouter(Router *gin.RouterGroup, PublicRouter 
 		scanlogRouter.DELETE("deleteScanlog", scanlogApi.DeleteScanlog)           // 删除扫描感知
 		scanlogRouter.DELETE("deleteScanlogByIds", scanlogApi.DeleteScanlogByIds) // 批量删除扫描感知
 		scanlogRouter.PUT("updateScanlog", scanlogApi.UpdateScanlog)              // 更新扫描感知
+		scanlogRouter.GET("getScanlogTop10", scanlogApi.GetScanlogTop10)
 	}
 	{
 		scanlogRouterWithoutRecord.GET("findScanlog", scanlogApi.FindScanlog)       // 根据ID获取扫描感知

@@ -4217,6 +4217,62 @@ paths:
       summary: 不需要鉴权的扫描感知接口
       tags:
       - Scanlog
+  /scanlog/getScanlogTop10:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 目的IP
+        in: query
+        name: dest_ip
+        type: string
+      - description: 目的端口
+        in: query
+        name: dest_port
+        type: integer
+      - description: 详细内容
+        in: query
+        name: detail
+        type: string
+      - description: 协议
+        in: query
+        name: protocol
+        type: string
+      - in: query
+        name: service
+        type: string
+      - description: 源IP
+        in: query
+        name: source_ip
+        type: string
+      - description: 源端口
+        in: query
+        name: source_port
+        type: integer
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"查询成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询扫描感知Top10统计信息
+      tags:
+      - Scanlog
   /scanlog/updateScanlog:
     put:
       consumes:

@@ -4209,6 +4209,94 @@ const docTemplate = `{
                 }
             }
         },
+        "/scanlog/getScanlogTop10": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Scanlog"
+                ],
+                "summary": "用id查询扫描感知Top10统计信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "主键ID",
+                        "name": "ID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "创建时间",
+                        "name": "createdAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "目的IP",
+                        "name": "dest_ip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "目的端口",
+                        "name": "dest_port",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "详细内容",
+                        "name": "detail",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "协议",
+                        "name": "protocol",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "service",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "源IP",
+                        "name": "source_ip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "源端口",
+                        "name": "source_port",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "更新时间",
+                        "name": "updatedAt",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"查询成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/scanlog/updateScanlog": {
             "put": {
                 "security": [

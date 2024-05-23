@@ -95,3 +95,19 @@ export const getImagesList = (params) => {
     params
   })
 }
+
+// @Tags Scanlog
+// @Summary 获取扫描感知记录Top10统计信息
+// @Security ApiKeyAuth
+// @accept application/json
+// @Produce application/json
+// @Param data query request.PageInfo true "获取扫描感知记录Top10统计信息"
+// @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
+// @Router /scanlog/top10 [get]
+export const getScanlogTop10 = (params) => {
+  return service({
+    url: '/scanlog/getScanlogTop10',
+    method: 'get',
+    params
+  })
+}

@@ -36,11 +36,11 @@ func RunWindowsServer() {
 
 	global.GVA_LOG.Info("server run success on ", zap.String("address", address))
 
-	go func() {
-		if err := initialize.ListenDockerEvents(); err != nil {
-			zap.L().Error(fmt.Sprintf("Failed to listen to Docker events: %v\n", err))
-		}
-	}()
+	//go func() {
+	//	if err := initialize.ListenDockerEvents(); err != nil {
+	//		zap.L().Error(fmt.Sprintf("Failed to listen to Docker events: %v\n", err))
+	//	}
+	//}()
 
 	fmt.Printf(`	
 	插件市场:https://plugin.gin-vue-admin.com
