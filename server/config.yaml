@@ -125,7 +125,7 @@ mysql:
     config: charset=utf8mb4&parseTime=True&loc=Local
     db-name: gva
     username: root
-    password: "20021023"
+    password: ""
     path: 127.0.0.1
     engine: ""
     log-mode: error

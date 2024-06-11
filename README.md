@@ -21,15 +21,18 @@
 
 ## 2. 使用说明
 
+需要下载安装的环境：
+
 ```
-- node版本 > v16.8.3
+- nodejs版本 > v16.8.3
 - golang版本 >= v1.22
 - IDE推荐：Goland
+- 数据库：Mysql
 ```
 
 ### 2.1 server项目
 
-使用 `Goland` 等编辑工具，打开server目录，不可以打开根目录
+使用 `Goland` 等编辑工具，打开server目录，不要打开根目录
 
 ```bash
 # 进入server文件夹
@@ -39,7 +42,10 @@ cd server
 go generate
 
 # 编译 
-go build -o server main.go (windows编译命令为go build -o server.exe main.go )
+# Linux下
+go build -o server main.go
+# Windows下
+go build -o server.exe main.go
 
 # 运行二进制
 ./server (windows运行命令为 server.exe)
@@ -58,15 +64,24 @@ npm install
 npm run serve
 ```
 
-### 2.3 swagger自动化API文档
+### 2.3 配置数据库
 
-#### 2.3.1 安装 swagger
+在数据库中运行gva.sql文件
+```bash
+# 进入server文件夹
+# 修改Mysql配置的内容，重新配置数据库地址、端口和用户名密码
+# 在数据库中运行gva.sql文件
+```
+
+### 2.4 swagger自动化API文档
+
+#### 2.4.1 安装 swagger
 
 ``` shell
 go install github.com/swaggo/swag/cmd/swag@latest
 ```
 
-#### 2.3.2 生成API文档
+#### 2.4.2 生成API文档
 
 ```` shell
 cd server
@@ -75,24 +90,6 @@ swag init
 
 > 执行上面的命令后，server目录下会出现docs文件夹里的 `docs.go`, `swagger.json`, `swagger.yaml` 三个文件更新，启动go服务之后, 在浏览器输入 [http://localhost:8888/swagger/index.html](http://localhost:8888/swagger/index.html) 即可查看swagger文档
 
-### 2.4 VSCode工作区
-
-#### 2.4.1 开发
-
-使用`VSCode`打开根目录下的工作区文件`gin-vue-admin.code-workspace`，在边栏可以看到三个虚拟目录：`backend`、`frontend`、`root`。
-
-#### 2.4.2 运行/调试
-
-在运行和调试中也可以看到三个task：`Backend`、`Frontend`、`Both (Backend & Frontend)`。运行`Both (Backend & Frontend)`可以同时启动前后端项目。
-
-#### 2.4.3 settings
-
-在工作区配置文件中有`go.toolsEnvVars`字段，是用于`VSCode`自身的go工具环境变量。此外在多go版本的系统中，可以通过`gopath`、`go.goroot`指定运行版本。
-
-```json
-    "go.gopath": null,
-    "go.goroot": null,
-```
 
 ## 3. 技术选型
 
